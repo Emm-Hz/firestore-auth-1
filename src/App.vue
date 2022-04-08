@@ -1,30 +1,35 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
-  <router-view/>
+<chargin-view v-if="loading" class="mt-5"/>
+  <div v-else>
+    <NavbarComp />
+    <div class="container">
+      <router-view />
+    </div>
+  </div>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import NavbarComp from "@/components/NavbarComp";
+import CharginView from "@/components/CharginView";
+import {firebase} from "@/firebase"
+import { ref } from '@vue/reactivity';
+import { onMounted } from '@vue/runtime-core';
 
-nav {
-  padding: 30px;
-}
+export default {
+  components: {
+    NavbarComp,
+    CharginView
+  },
+  setup() {
+    const loading = ref(false)
 
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
+    onMounted(async () => {
+      loading.value= true
+      await firebase.getCurrentUser()
+      loading.value = false
+    })
 
-nav a.router-link-exact-active {
-  color: #42b983;
-}
-</style>
+    return { loading }
+  }
+};
+</script>
